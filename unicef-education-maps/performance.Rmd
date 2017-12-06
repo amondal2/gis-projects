@@ -1,0 +1,48 @@
+options(warn=-1)
+---
+title: "Mapping Global Education Metrics"
+output: html_notebook
+---
+
+In this notebook, I will construct a few maps of different education metrics provided by UNICEF. See the corresponding iPython notebook for a more comprehensive analysis. 
+
+First let's load the required libraries. 
+```{r}
+library(rgeos)
+library(maptools)
+library(gpclib)
+library(RColorBrewer)
+library(rworldmap)
+```
+Let's now read in the CSVs I wrote in Python to bind the data. 
+```{r}
+df1<-read.csv('best_performing.csv')
+df2<-read.csv('worst_performing.csv')
+sPDF <- joinCountryData2Map( df2, joinCode = "ISO3", nameJoinColumn = "Country")
+par(mai=c(0,0,0.2,0),xaxs="i",yaxs="i")
+colourPalette <- RColorBrewer::brewer.pal(5,'Spectral')
+mapCountryData( sPDF, nameColumnToPlot="Value", catMethod="categorical", oceanCol='lightblue',  missingCountryCol='white',colourPalette = colourPalette, borderCol='black', mapRegion='Africa',  addLegend=FALSE,  mapTitle='Worst-Performing Countries by UNICEF Metric')
+
+#export as jpg
+svg('map1.svg')
+mapCountryData( sPDF, nameColumnToPlot="Value", catMethod="categorical", oceanCol='lightblue',  missingCountryCol='white',colourPalette = colourPalette, borderCol='black', mapRegion='Africa',  addLegend=FALSE)
+dev.off()
+
+```
+```{r}
+df1<-read.csv('best_performing.csv')
+df2<-read.csv('worst_performing.csv')
+sPDF2 <- joinCountryData2Map( df1, joinCode = "ISO3", nameJoinColumn = "Country")
+par(mai=c(0,0,0.2,0),xaxs="i",yaxs="i")
+colourPalette <- RColorBrewer::brewer.pal(5,'Dark2')
+mapCountryData( sPDF2, nameColumnToPlot="Value", catMethod="categorical", oceanCol='lightblue',  missingCountryCol='white',colourPalette = colourPalette, borderCol='black', addLegend=FALSE,  mapTitle='Best-Performing Countries by UNICEF Metric')
+
+#export as jpg
+svg('map2.svg')
+mapCountryData( sPDF2, nameColumnToPlot="Value", catMethod="categorical", oceanCol='lightblue',  missingCountryCol='white',colourPalette = colourPalette, borderCol='black',  addLegend=FALSE)
+dev.off()
+```
+
+
+
+
